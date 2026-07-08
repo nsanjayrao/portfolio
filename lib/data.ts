@@ -14,7 +14,7 @@ export const site = {
   github: "https://github.com/nsanjayrao",
   linkedin: "https://www.linkedin.com/in/n-sanjay-rao-9a2142131/",
   resumeHref: "/resume.pdf",
-  url: "https://nsanjayrao.vercel.app",
+  url: "https://n-sanjay-rao.vercel.app",
 };
 
 export const typingRoles = [
