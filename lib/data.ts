@@ -198,6 +198,7 @@ export const projects: Project[] = [
     tags: ["GenAI", "Evaluation"],
     private: true,
     flagship: true,
+    video: { src: "/autotrim-demo.mp4", poster: "/autotrim-demo-poster.jpg" },
   },
   {
     slug: "free-rag-chatbot",
