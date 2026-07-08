@@ -35,7 +35,6 @@ html {
 body {
   @apply bg-surface text-ink antialiased;
   text-rendering: optimizeLegibility;
-  font-feature-settings: "cv11", "ss01"; /* Inter: open digits + refined a/g */
 }
 
 p {

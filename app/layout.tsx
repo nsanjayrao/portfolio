@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Mono } from "next/font/google";
+import { Space_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { site } from "@/lib/data";
 import "./globals.css";
 
-// Body copy — stays readable.
-const inter = Inter({
-  subsets: ["latin"],
+// Body & headline copy — Nothing's signature NType82 typeface.
+const ntype82 = localFont({
+  src: "./fonts/NType82-Regular.otf",
   display: "swap",
   variable: "--font-sans",
 });
@@ -108,7 +108,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${ndot.variable} ${spaceMono.variable} font-sans noise`}
+        className={`${ntype82.variable} ${ndot.variable} ${spaceMono.variable} font-sans noise`}
       >
         {children}
       </body>
