@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Micro_5, Space_Mono } from "next/font/google";
+import { Inter, Space_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { site } from "@/lib/data";
 import "./globals.css";
 
@@ -10,10 +11,10 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-// Dot-matrix display face (Nothing-style) — hero name, section titles, brand.
-const micro5 = Micro_5({
-  subsets: ["latin"],
-  weight: "400",
+// Round-dot dot-matrix display face — Nothing's own Ndot57 typeface.
+// Used for the hero name, section titles, and nav brand.
+const ndot = localFont({
+  src: "./fonts/Ndot57.otf",
   display: "swap",
   variable: "--font-display",
 });
@@ -107,7 +108,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${micro5.variable} ${spaceMono.variable} font-sans noise`}
+        className={`${inter.variable} ${ndot.variable} ${spaceMono.variable} font-sans noise`}
       >
         {children}
       </body>
