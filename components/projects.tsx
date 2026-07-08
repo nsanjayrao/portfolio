@@ -11,7 +11,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { ExternalLink, Github, Search, Star } from "lucide-react";
+import { ExternalLink, Github, Lock, Search, Star } from "lucide-react";
 import { Section } from "./section";
 import { projectFilters, projects, type Project } from "@/lib/data";
 
@@ -140,16 +140,26 @@ function ProjectCard({ project }: { project: Project }) {
       </ul>
 
       <div className="mt-5 flex items-center gap-3 border-t border-edge pt-4">
-        <a
-          href={project.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-muted transition-colors hover:text-ink"
-          aria-label={`Source of ${project.title} on GitHub`}
-        >
-          <Github className="h-3.5 w-3.5" aria-hidden />
-          Source
-        </a>
+        {project.github ? (
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-muted transition-colors hover:text-ink"
+            aria-label={`Source of ${project.title} on GitHub`}
+          >
+            <Github className="h-3.5 w-3.5" aria-hidden />
+            Source
+          </a>
+        ) : (
+          <span
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-faint"
+            title="Source is a private repository"
+          >
+            <Lock className="h-3.5 w-3.5" aria-hidden />
+            Private repo
+          </span>
+        )}
         {project.demo && (
           <a
             href={project.demo}
@@ -187,7 +197,7 @@ export function Projects() {
       id="projects"
       eyebrow="Projects"
       title="Things I've built."
-      lede="Every project below is public, runnable, and built on free tiers — click through to the source and see for yourself."
+      lede="Most of these are public and runnable on free tiers — click through to the source and see for yourself. A couple are private client / work projects, shown here for context."
     >
       <div className="mb-8 flex flex-wrap items-center gap-3">
         <div className="glass flex items-center gap-2 rounded-full px-4 py-2">
