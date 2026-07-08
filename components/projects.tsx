@@ -145,7 +145,7 @@ function ProjectCard({ project }: { project: Project }) {
             href={project.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-muted transition-colors hover:text-ink"
+            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-muted transition-colors hover:text-ink"
             aria-label={`Source of ${project.title} on GitHub`}
           >
             <Github className="h-3.5 w-3.5" aria-hidden />
@@ -153,7 +153,7 @@ function ProjectCard({ project }: { project: Project }) {
           </a>
         ) : (
           <span
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-faint"
+            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-faint"
             title="Source is a private repository"
           >
             <Lock className="h-3.5 w-3.5" aria-hidden />
@@ -165,7 +165,7 @@ function ProjectCard({ project }: { project: Project }) {
             href={project.demo}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-accent transition-colors hover:underline"
+            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-accent transition-colors hover:underline"
             aria-label={`${project.title} live demo`}
           >
             <ExternalLink className="h-3.5 w-3.5" aria-hidden />

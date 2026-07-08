@@ -1,12 +1,29 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Micro_5, Space_Mono } from "next/font/google";
 import { site } from "@/lib/data";
 import "./globals.css";
 
+// Body copy — stays readable.
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-sans",
+});
+
+// Dot-matrix display face (Nothing-style) — hero name, section titles, brand.
+const micro5 = Micro_5({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-display",
+});
+
+// Monospace — eyebrows, buttons, nav links, tags.
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -89,7 +106,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${inter.variable} font-sans noise`}>{children}</body>
+      <body
+        className={`${inter.variable} ${micro5.variable} ${spaceMono.variable} font-sans noise`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

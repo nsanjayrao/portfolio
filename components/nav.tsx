@@ -58,12 +58,12 @@ export function Nav() {
         <a
           href="#hero"
           onClick={(e) => scrollTo(e, "#hero")}
-          className="group text-sm font-bold tracking-tight"
+          className="group font-display text-base tracking-normal"
         >
           <span className="gradient-text inline-block transition-transform duration-200 group-hover:scale-110">
             SR
           </span>
-          <span className="ml-2 hidden text-ink-muted transition-colors group-hover:text-ink sm:inline">
+          <span className="ml-2.5 hidden text-ink-muted transition-colors group-hover:text-ink sm:inline">
             {site.name}
           </span>
         </a>
@@ -74,7 +74,7 @@ export function Nav() {
               <a
                 href={l.href}
                 onClick={(e) => scrollTo(e, l.href)}
-                className={`rounded-lg px-3 py-1.5 text-sm transition-colors hover:text-ink ${
+                className={`rounded-lg px-3 py-1.5 font-mono text-xs uppercase tracking-wider transition-colors hover:text-ink ${
                   activeHash === l.href ? "text-ink" : "text-ink-muted"
                 }`}
               >
@@ -131,7 +131,7 @@ export function Nav() {
                 <a
                   href={l.href}
                   onClick={(e) => scrollTo(e, l.href)}
-                  className="block rounded-xl px-4 py-3 text-sm font-medium text-ink-muted transition-colors hover:bg-accent/10 hover:text-ink"
+                  className="block rounded-xl px-4 py-3 font-mono text-xs uppercase tracking-wider text-ink-muted transition-colors hover:bg-accent/10 hover:text-ink"
                 >
                   {l.label}
                 </a>
