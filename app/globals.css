@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Design tokens — light is default, .dark overrides                   */
+/* ------------------------------------------------------------------ */
+:root {
+  --surface: 252 252 251;
+  --surface-raised: 255 255 255;
+  --ink: 18 18 22;
+  --ink-muted: 84 84 96;
+  --ink-faint: 108 108 122; /* ≥4.5:1 on --surface at 14px */
+  --edge: 229 229 233;
+  --accent: 79 70 229; /* indigo-600 — single restrained accent */
+  --accent-soft: 224 231 255;
+}
+
+.dark {
+  --surface: 8 8 11;
+  --surface-raised: 16 16 21;
+  --ink: 246 246 249;
+  --ink-muted: 166 166 180;
+  --ink-faint: 132 132 150; /* ≥4.5:1 on dark --surface at 14px */
+  --edge: 38 38 48;
+  --accent: 139 148 255; /* softened indigo for dark contrast */
+  --accent-soft: 49 46 129;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  @apply bg-surface text-ink antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv11", "ss01"; /* Inter: open digits + refined a/g */
+}
+
+p {
+  text-wrap: pretty; /* avoid single-word orphan lines */
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.25);
+}
+
+/* Accessible focus rings everywhere */
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Background layers                                                   */
+/* ------------------------------------------------------------------ */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(var(--ink) / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--ink) / 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 40%, transparent 100%);
+}
+
+.noise::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Glass card — lit from above: a 1px top highlight sells the material */
+.glass {
+  position: relative;
+  background: rgb(var(--surface-raised) / 0.65);
+  backdrop-filter: blur(18px) saturate(1.5);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  border: 1px solid rgb(var(--edge) / 0.85);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.06),
+    0 1px 2px rgb(0 0 0 / 0.04),
+    0 8px 24px -12px rgb(0 0 0 / 0.12);
+}
+.dark .glass {
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.07),
+    0 1px 2px rgb(0 0 0 / 0.3),
+    0 12px 32px -16px rgb(0 0 0 / 0.55);
+}
+
+/* Mouse-following spotlight for cards: JS sets --spot-x / --spot-y */
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    420px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgb(var(--accent) / 0.08),
+    transparent 65%
+  );
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Thin theme-aware scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--ink-faint) / 0.4) transparent;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--ink-faint) / 0.4);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--ink-faint) / 0.65);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Soft page-load fade so first paint never feels abrupt */
+@keyframes page-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+body {
+  animation: page-in 0.5s ease both;
+}
+
+/* Signature gradient — used ONCE (hero name). Everything else is mono + accent. */
+.gradient-text {
+  background: linear-gradient(
+    120deg,
+    rgb(var(--accent)) 0%,
+    #a855f7 45%,
+    #ec4899 75%,
+    rgb(var(--accent)) 100%
+  );
+  background-size: 250% 250%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-pan 8s ease infinite;
+}
+
+@keyframes gradient-pan {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Fluid display type — glides between breakpoints instead of jumping  */
+/* ------------------------------------------------------------------ */
+.text-display {
+  font-size: clamp(2.75rem, 1.2rem + 7vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+
+.text-heading {
+  font-size: clamp(2rem, 1.2rem + 2.6vw, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+/* Button primitives — Vercel-style ink primary, quiet secondary */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium transition-all duration-200 active:scale-[0.97];
+}
+.btn-primary {
+  @apply btn bg-ink text-surface px-6 py-3 shadow-lg hover:opacity-90 hover:shadow-xl;
+}
+.btn-secondary {
+  @apply btn glass px-6 py-3 hover:border-accent/50;
+}
+.btn-icon {
+  @apply btn glass h-11 w-11 hover:border-accent/50 hover:text-accent;
+}
+
+/* Skip link: hidden until keyboard-focused */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100%;
+  z-index: 100;
+  border-radius: 9999px;
+  background: rgb(var(--ink));
+  color: rgb(var(--surface));
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion: kill decorative animation, keep content visible     */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .aurora-blob,
+  .gradient-text {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
