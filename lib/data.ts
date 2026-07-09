@@ -184,23 +184,6 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: "autotrim-auto-rater",
-    title: "AutoTrim Auto-Rater",
-    summary:
-      "An LLM auto-rater that evaluates algorithmically trimmed videos against their originals — encoding ad-policy guidelines as versioned prompt blocks assembled into one deterministic Gemini prompt.",
-    highlights: [
-      "No-RAG verdict path: every applicable policy rule is compiled into the prompt for every task, so a compliance check can never silently miss a rule",
-      "Multi-label flags with timestamps and evidence, forced into schema-validated JSON via Gemini response_schema",
-      "Video delivery ladder — yt-dlp caching → File API upload → dual-video single request — with a two-pass fallback for undownloadable URLs",
-      "A deterministic metadata filter as the retrieval layer plus Gemini implicit caching makes the repeated policy prefix ~10x cheaper; eval harness scores multi-label alignment / precision / recall against golden and control pairs",
-    ],
-    tech: ["Python", "Gemini", "Pydantic", "Streamlit", "yt-dlp", "Pandas"],
-    tags: ["GenAI", "Evaluation"],
-    private: true,
-    flagship: true,
-    video: { src: "/autotrim-demo.mp4", poster: "/autotrim-demo-poster.jpg" },
-  },
-  {
     slug: "free-rag-chatbot",
     title: "Free RAG Chatbot",
     summary:
