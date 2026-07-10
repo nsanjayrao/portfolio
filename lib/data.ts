@@ -72,7 +72,7 @@ export const timeline: TimelineItem[] = [
     period: "2023",
     title: "B.Tech, Electronics & Communication",
     place: "Vignan's Institute of Information Technology, AP",
-    description: "Graduated with a CGPA of 7.19.",
+    description: "",
   },
 ];
 
@@ -180,6 +180,8 @@ export type Project = {
   video?: { src: string; poster: string };
   /** Static preview screenshot (in /public) for projects without a clip. */
   image?: { src: string; alt: string };
+  /** Earlier / learning-era work: shown as a compact archive row, not a card. */
+  archive?: boolean;
 };
 
 export const projects: Project[] = [
@@ -238,44 +240,38 @@ export const projects: Project[] = [
     slug: "customer-churn-prediction",
     title: "Customer Churn Prediction",
     summary:
-      "Classification models identifying the key drivers of telecom customer churn.",
-    highlights: [
-      "Logistic Regression and Random Forest with feature engineering, reaching ~85% accuracy",
-      "Surfaced the strongest churn drivers for retention targeting",
-    ],
+      "Classification models identifying the key drivers of telecom customer churn — ~85% accuracy.",
+    highlights: [],
     tech: ["Python", "scikit-learn", "Pandas"],
     tags: ["Machine Learning", "Data"],
     github: "https://github.com/nsanjayrao/Blackcoffer_project_assignment",
+    archive: true,
   },
   {
     slug: "hotel-reviews-analysis",
     title: "Hotel Reviews Sentiment Analysis",
     summary:
       "NLP pipeline processing 10,000+ hotel reviews to surface service-quality trends.",
-    highlights: [
-      "Tokenization and sentiment scoring across 10,000+ reviews",
-      "Actionable service-improvement themes extracted from free-text feedback",
-    ],
+    highlights: [],
     tech: ["Python", "NLTK", "Pandas"],
     tags: ["NLP", "Data"],
     github: "https://github.com/nsanjayrao/Hotel-reviews-analysis",
+    archive: true,
   },
   {
     slug: "amazon-web-scraper",
     title: "Amazon Web Scraper",
     summary:
       "Product data extraction pipeline scraping listings into structured datasets.",
-    highlights: [
-      "Automated collection of product titles, prices, and ratings",
-      "Structured CSV output ready for analysis",
-    ],
+    highlights: [],
     tech: ["Python", "BeautifulSoup", "Pandas"],
     tags: ["Data"],
     github: "https://github.com/nsanjayrao/my_amazon_web_scrapper_project",
+    archive: true,
   },
 ];
 
-export const projectFilters = ["All", "GenAI", "RAG", "Evaluation", "Agents", "Full-Stack", "Machine Learning", "NLP", "Data"];
+export const projectFilters = ["All", "GenAI", "RAG", "Agents", "Full-Stack"];
 
 export type Certification = {
   name: string;
@@ -288,11 +284,5 @@ export const certifications: Certification[] = [
     name: "Google Data Analytics Professional Certificate",
     issuer: "Google · Coursera — 8 courses, completed June 2023",
     href: "https://www.coursera.org/account/accomplishments/professional-cert/WFFGGUER2S8Y",
-  },
-  {
-    // TODO(sanjay): confirm exact course title as printed on the certificate
-    name: "Python Zero to Hero",
-    issuer: "Udemy",
-    href: "https://www.udemy.com/certificate/UC-bb5d8399-c2e1-41e5-9e9b-0c07fd254a57/",
   },
 ];

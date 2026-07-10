@@ -3,32 +3,33 @@
 @tailwind utilities;
 
 /* ------------------------------------------------------------------ */
-/* Design tokens — light is default, .dark overrides                   */
+/* Design tokens — Nothing-inspired: monochrome + one signal red.      */
+/* Light is default, .dark overrides.                                  */
 /* ------------------------------------------------------------------ */
 :root {
-  --surface: 252 252 251;
-  --surface-raised: 255 255 255;
-  --ink: 18 18 22;
-  --ink-muted: 84 84 96;
-  --ink-faint: 108 108 122; /* ≥4.5:1 on --surface at 14px */
-  --edge: 229 229 233;
-  --accent: 79 70 229; /* indigo-600 — single restrained accent */
-  --accent-soft: 224 231 255;
+  --surface: 244 244 242; /* warm paper white */
+  --surface-raised: 250 250 249;
+  --ink: 10 10 10;
+  --ink-muted: 82 82 82;
+  --ink-faint: 108 108 106; /* ≥4.5:1 on --surface at 14px */
+  --edge: 208 208 204;
+  --accent: 193 18 24; /* signal red, darkened to ≥4.5:1 on --surface for small text */
+  --accent-soft: 250 220 220;
 }
 
 .dark {
-  --surface: 8 8 11;
-  --surface-raised: 16 16 21;
-  --ink: 246 246 249;
-  --ink-muted: 166 166 180;
-  --ink-faint: 132 132 150; /* ≥4.5:1 on dark --surface at 14px */
-  --edge: 38 38 48;
-  --accent: 139 148 255; /* softened indigo for dark contrast */
-  --accent-soft: 49 46 129;
+  --surface: 10 10 10; /* near-black hardware matte */
+  --surface-raised: 17 17 17;
+  --ink: 237 237 235;
+  --ink-muted: 163 163 161;
+  --ink-faint: 134 134 132; /* ≥4.5:1 on dark --surface at 14px */
+  --edge: 40 40 40;
+  --accent: 255 70 60; /* red lifted for dark contrast */
+  --accent-soft: 60 16 16;
 }
 
+/* Lenis drives smooth scrolling — CSS smooth would fight it. */
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 5rem;
 }
 
@@ -42,85 +43,66 @@ p {
 }
 
 ::selection {
-  background: rgb(var(--accent) / 0.25);
+  background: rgb(var(--accent));
+  color: rgb(var(--surface));
 }
 
 /* Accessible focus rings everywhere */
 :focus-visible {
   outline: 2px solid rgb(var(--accent));
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 /* ------------------------------------------------------------------ */
 /* Background layers                                                   */
 /* ------------------------------------------------------------------ */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, rgb(var(--ink) / 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(var(--ink) / 0.045) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 40%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 40%, transparent 100%);
+/* Dot-matrix field — echoes the Ndot57 pixel grid */
+.bg-dots {
+  background-image: radial-gradient(rgb(var(--ink) / 0.16) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 30%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 30%, black 30%, transparent 100%);
 }
 
+/* Film grain — analog texture over the whole page */
 .noise::after {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.028;
+  opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.aurora-blob {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(90px);
-  will-change: transform;
-  pointer-events: none;
+/* ------------------------------------------------------------------ */
+/* Surfaces — flat, precise, hairline-ruled. No glass, no glow.        */
+/* ------------------------------------------------------------------ */
+.panel {
+  background: rgb(var(--surface-raised));
+  border: 1px solid rgb(var(--edge));
 }
 
-/* Glass card — lit from above: a 1px top highlight sells the material */
-.glass {
-  position: relative;
-  background: rgb(var(--surface-raised) / 0.65);
-  backdrop-filter: blur(18px) saturate(1.5);
-  -webkit-backdrop-filter: blur(18px) saturate(1.5);
-  border: 1px solid rgb(var(--edge) / 0.85);
-  box-shadow:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.06),
-    0 1px 2px rgb(0 0 0 / 0.04),
-    0 8px 24px -12px rgb(0 0 0 / 0.12);
-}
-.dark .glass {
-  box-shadow:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.07),
-    0 1px 2px rgb(0 0 0 / 0.3),
-    0 12px 32px -16px rgb(0 0 0 / 0.55);
+/* Overlay panels (dialogs) get a soft drop only — still flat material */
+.panel-overlay {
+  background: rgb(var(--surface-raised));
+  border: 1px solid rgb(var(--edge));
+  box-shadow: 0 24px 64px -24px rgb(0 0 0 / 0.35);
 }
 
-/* Mouse-following spotlight for cards: JS sets --spot-x / --spot-y */
-.spotlight::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  background: radial-gradient(
-    420px circle at var(--spot-x, 50%) var(--spot-y, 50%),
-    rgb(var(--accent) / 0.08),
-    transparent 65%
-  );
-}
-.spotlight:hover::before {
-  opacity: 1;
+/* Mono uppercase micro-label — the system's metadata voice */
+.meta {
+  @apply font-mono text-[11px] uppercase tracking-[0.22em] text-ink-faint;
 }
 
-/* Thin theme-aware scrollbar */
+/* Square chip — spec-sheet tag */
+.chip {
+  @apply inline-block border border-edge bg-surface px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-ink-muted;
+}
+
+/* ------------------------------------------------------------------ */
+/* Thin theme-aware scrollbar                                          */
+/* ------------------------------------------------------------------ */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgb(var(--ink-faint) / 0.4) transparent;
@@ -131,7 +113,6 @@ p {
 }
 ::-webkit-scrollbar-thumb {
   background: rgb(var(--ink-faint) / 0.4);
-  border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--ink-faint) / 0.65);
@@ -149,60 +130,84 @@ body {
   animation: page-in 0.5s ease both;
 }
 
-/* Signature gradient — used ONCE (hero name). Everything else is mono + accent. */
-.gradient-text {
-  background: linear-gradient(
-    120deg,
-    rgb(var(--accent)) 0%,
-    #a855f7 45%,
-    #ec4899 75%,
-    rgb(var(--accent)) 100%
-  );
-  background-size: 250% 250%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: gradient-pan 8s ease infinite;
-}
-
-@keyframes gradient-pan {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
 /* ------------------------------------------------------------------ */
 /* Fluid display type — glides between breakpoints instead of jumping  */
 /* ------------------------------------------------------------------ */
-/* Dot-matrix display face (Micro 5): single weight, needs open tracking so
-   the pixel grid never overlaps. Bold would faux-double the dots — keep 400. */
+/* Dot-matrix display face (Ndot57): single weight, needs open tracking
+   so the pixel grid never overlaps. Bold would faux-double the dots. */
 .text-display {
   font-family: var(--font-display);
-  font-size: clamp(2.75rem, 1.2rem + 7vw, 5.5rem);
-  line-height: 1.1;
+  font-size: clamp(3.25rem, 1rem + 11vw, 9rem);
+  line-height: 0.95;
   letter-spacing: 0.01em;
   font-weight: 400;
 }
 
 .text-heading {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 1.2rem + 2.6vw, 3.25rem);
-  line-height: 1.15;
+  font-size: clamp(2rem, 1.1rem + 3.2vw, 3.75rem);
+  line-height: 1.08;
   letter-spacing: 0.01em;
   font-weight: 400;
 }
 
-/* Button primitives — Vercel-style ink primary, quiet secondary */
+/* Section index numeral — oversized dot-matrix ghost.
+   Solid low-alpha fill as the base so non-WebKit engines still render it;
+   the stroke refines it where supported. */
+.text-index {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 2rem + 5vw, 6.5rem);
+  line-height: 1;
+  font-weight: 400;
+  color: rgb(var(--ink) / 0.08);
+  -webkit-text-stroke: 1px rgb(var(--ink) / 0.25);
+}
+
+/* ------------------------------------------------------------------ */
+/* Buttons — pill silhouettes (Nothing OS), mono uppercase voice       */
+/* ------------------------------------------------------------------ */
 .btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full font-mono text-sm uppercase tracking-wider transition-all duration-200 active:scale-[0.97];
+  @apply inline-flex items-center justify-center gap-2 rounded-full font-mono text-xs uppercase tracking-[0.15em] transition-all duration-200 active:scale-[0.97];
 }
 .btn-primary {
-  @apply btn bg-ink text-surface px-6 py-3 shadow-lg hover:opacity-90 hover:shadow-xl;
+  @apply btn bg-ink text-surface px-6 py-3.5 hover:bg-accent hover:text-white;
 }
 .btn-secondary {
-  @apply btn glass px-6 py-3 hover:border-accent/50;
+  @apply btn border border-edge bg-surface-raised px-6 py-3.5 text-ink hover:border-ink;
 }
 .btn-icon {
-  @apply btn glass h-11 w-11 hover:border-accent/50 hover:text-accent;
+  @apply btn h-12 w-12 border border-edge bg-surface-raised hover:border-ink hover:text-ink;
+}
+
+/* Editorial field — underline-only inputs */
+.field {
+  @apply w-full border-0 border-b border-edge bg-transparent px-0 py-2.5 text-sm outline-none transition-colors placeholder:text-ink-faint focus:border-ink;
+}
+
+/* Link with sliding underline */
+.link-slide {
+  background-image: linear-gradient(rgb(var(--ink)), rgb(var(--ink)));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s ease;
+}
+.link-slide:hover {
+  background-size: 100% 1px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Marquee strip                                                       */
+/* ------------------------------------------------------------------ */
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+/* WCAG 2.2.2: moving content must be pausable — hover/focus halts the loop */
+.marquee-pause:hover .animate-marquee,
+.marquee-pause:focus-within .animate-marquee {
+  animation-play-state: paused;
 }
 
 /* Skip link: hidden until keyboard-focused */
@@ -227,11 +232,7 @@ body {
 /* Reduced motion: kill decorative animation, keep content visible     */
 /* ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .aurora-blob,
-  .gradient-text {
+  .animate-marquee {
     animation: none !important;
   }
   *,

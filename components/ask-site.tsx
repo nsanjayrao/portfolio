@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CornerDownLeft, Search, Sparkles, X } from "lucide-react";
 import { createRetriever, exampleQuestions, type Hit } from "@/lib/retrieval";
+import { scrollToHash } from "@/lib/scroll";
 
 /**
  * "Ask this site" — the portfolio's signature interaction.
@@ -18,7 +19,24 @@ export function AskSite() {
   const [asked, setAsked] = useState<string | null>(null);
   const [hits, setHits] = useState<Hit[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
   const search = useMemo(() => createRetriever(), []);
+
+  // Escape closes the dialog; focus returns to the launcher.
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") close();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  function close() {
+    setOpen(false);
+    launcherRef.current?.focus();
+  }
 
   function ask(q: string) {
     const question = q.trim();
@@ -28,14 +46,15 @@ export function AskSite() {
   }
 
   function goTo(anchor: string) {
-    setOpen(false);
-    document.querySelector(anchor)?.scrollIntoView({ behavior: "smooth" });
+    close();
+    scrollToHash(anchor);
   }
 
   return (
     <>
       {/* Launcher — bottom-left, mirroring scroll-to-top on the right */}
       <motion.button
+        ref={launcherRef}
         type="button"
         onClick={() => {
           setOpen(true);
@@ -45,7 +64,7 @@ export function AskSite() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
-        className="glass fixed bottom-6 left-6 z-40 flex items-center gap-2 rounded-full py-2.5 pl-3 pr-4 text-sm font-medium shadow-lg transition-transform hover:scale-105 active:scale-95"
+        className="panel fixed bottom-6 left-6 z-40 flex items-center gap-2 py-2.5 pl-3 pr-4 font-mono text-xs uppercase tracking-wider transition-colors hover:border-ink active:scale-95"
       >
         <Sparkles className="h-4 w-4 text-accent" aria-hidden />
         Ask this site
@@ -58,13 +77,13 @@ export function AskSite() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setOpen(false)}
+            onClick={close}
           >
             <motion.div
               role="dialog"
               aria-modal="true"
               aria-label="Ask this site"
-              className="glass w-full max-w-xl overflow-hidden rounded-2xl shadow-2xl"
+              className="panel-overlay w-full max-w-xl overflow-hidden"
               initial={{ opacity: 0, scale: 0.96, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 16 }}
@@ -78,7 +97,7 @@ export function AskSite() {
                 </p>
                 <button
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={close}
                   aria-label="Close"
                   className="rounded-md p-1 text-ink-faint transition-colors hover:text-ink"
                 >
@@ -105,7 +124,7 @@ export function AskSite() {
                 <button
                   type="submit"
                   aria-label="Ask"
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent transition-transform hover:scale-110 active:scale-90"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center bg-ink text-surface transition-colors hover:bg-accent hover:text-white active:scale-90"
                 >
                   <CornerDownLeft className="h-3.5 w-3.5" aria-hidden />
                 </button>
@@ -126,7 +145,7 @@ export function AskSite() {
                               setQuery(q);
                               ask(q);
                             }}
-                            className="rounded-full border border-edge px-3 py-1.5 text-xs text-ink-muted transition-colors hover:border-accent/60 hover:text-ink"
+                            className="chip transition-colors hover:border-ink hover:text-ink"
                           >
                             {q}
                           </button>
@@ -158,7 +177,7 @@ export function AskSite() {
                           <button
                             type="button"
                             onClick={() => goTo(h.chunk.anchor)}
-                            className="group flex w-full items-baseline gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition-colors hover:bg-accent/10"
+                            className="group flex w-full items-baseline gap-2 px-2 py-1.5 text-left text-xs transition-colors hover:bg-ink/5 dark:hover:bg-ink/10"
                           >
                             <span className="font-mono text-accent">[{i + 1}]</span>
                             <span className="font-medium text-ink group-hover:text-accent">

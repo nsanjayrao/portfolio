@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { site } from "@/lib/data";
 import { OPEN_PALETTE_EVENT } from "@/lib/command-events";
+import { scrollToHash } from "@/lib/scroll";
 
 type Command = {
   label: string;
@@ -32,7 +33,7 @@ export function CommandPalette() {
 
   const go = useCallback((hash: string) => {
     setOpen(false);
-    document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" });
+    scrollToHash(hash);
   }, []);
 
   const commands: Command[] = [
@@ -92,11 +93,17 @@ export function CommandPalette() {
     };
   }, []);
 
+  // Remember what had focus before the palette opened; give it back on close.
+  const lastFocused = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (open) {
+      lastFocused.current = document.activeElement as HTMLElement | null;
       setQuery("");
       setActive(0);
       requestAnimationFrame(() => inputRef.current?.focus());
+    } else {
+      lastFocused.current?.focus();
+      lastFocused.current = null;
     }
   }, [open]);
 
@@ -126,7 +133,7 @@ export function CommandPalette() {
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="glass w-full max-w-lg overflow-hidden rounded-2xl shadow-2xl"
+            className="panel-overlay w-full max-w-lg overflow-hidden"
             initial={{ opacity: 0, scale: 0.96, y: -12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -12 }}
@@ -147,7 +154,7 @@ export function CommandPalette() {
                 className="w-full bg-transparent text-sm outline-none placeholder:text-ink-faint"
                 aria-label="Search commands"
               />
-              <kbd className="rounded border border-edge px-1.5 py-0.5 text-[10px] text-ink-faint">
+              <kbd className="border border-edge px-1.5 py-0.5 font-mono text-[10px] text-ink-faint">
                 ESC
               </kbd>
             </div>
@@ -163,13 +170,20 @@ export function CommandPalette() {
                     type="button"
                     onClick={c.action}
                     onMouseEnter={() => setActive(i)}
-                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
-                      i === active ? "bg-accent/10 text-ink" : "text-ink-muted"
+                    className={`flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors ${
+                      i === active ? "bg-ink text-surface" : "text-ink-muted"
                     }`}
                   >
-                    <c.icon className="h-4 w-4 shrink-0 text-accent" aria-hidden />
+                    <c.icon
+                      className={`h-4 w-4 shrink-0 ${i === active ? "text-surface" : "text-accent"}`}
+                      aria-hidden
+                    />
                     <span className="font-medium">{c.label}</span>
-                    <span className="ml-auto text-xs text-ink-faint">{c.hint}</span>
+                    <span
+                      className={`ml-auto text-xs ${i === active ? "text-surface/70" : "text-ink-faint"}`}
+                    >
+                      {c.hint}
+                    </span>
                   </button>
                 </li>
               ))}

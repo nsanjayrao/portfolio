@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/lib/data";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import "./globals.css";
 
 // Body & headline copy — Nothing's signature NType82 typeface.
@@ -61,8 +63,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090e" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f4f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -110,7 +112,9 @@ export default function RootLayout({
       <body
         className={`${ntype82.variable} ${ndot.variable} ${spaceMono.variable} font-sans noise`}
       >
+        <SmoothScroll />
         {children}
+        <Analytics />
       </body>
     </html>
   );

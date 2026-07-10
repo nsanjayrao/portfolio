@@ -31,17 +31,10 @@ const config: Config = {
         display: ["var(--font-display)", "var(--font-sans)", "system-ui", "sans-serif"],
       },
       animation: {
-        aurora: "aurora 14s ease-in-out infinite alternate",
-        "aurora-slow": "aurora 22s ease-in-out infinite alternate-reverse",
         blink: "blink 1.1s step-end infinite",
-        marquee: "marquee 30s linear infinite",
+        marquee: "marquee 28s linear infinite",
       },
       keyframes: {
-        aurora: {
-          "0%": { transform: "translate(0, 0) scale(1)" },
-          "50%": { transform: "translate(6%, -4%) scale(1.15)" },
-          "100%": { transform: "translate(-5%, 5%) scale(0.95)" },
-        },
         blink: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },

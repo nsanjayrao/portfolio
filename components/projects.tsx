@@ -2,16 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import { ExternalLink, Github, Lock, Search, Star } from "lucide-react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Github, Lock, Search } from "lucide-react";
 import { Section } from "./section";
 import { projectFilters, projects, type Project } from "@/lib/data";
 
@@ -40,148 +32,130 @@ function DemoVideo({ src, poster, title }: { src: string; poster: string; title:
       preload="none"
       poster={poster}
       aria-label={`Demo recording of ${title}`}
-      className="mb-5 aspect-video w-full rounded-xl border border-edge object-cover"
+      className="aspect-video w-full border-b border-edge object-cover transition-transform duration-500 group-hover:scale-[1.02]"
     >
       {!reduce && <source src={src} type="video/mp4" />}
     </video>
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-
-  // 3D tilt on hover
-  const rx = useMotionValue(0);
-  const ry = useMotionValue(0);
-  const srx = useSpring(rx, { stiffness: 180, damping: 20 });
-  const sry = useSpring(ry, { stiffness: 180, damping: 20 });
-  const transform = useTransform(
-    [srx, sry],
-    ([a, b]) => `perspective(900px) rotateX(${a}deg) rotateY(${b}deg)`
-  );
-
-  function onMove(e: React.MouseEvent) {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    // Spotlight follows the cursor even under reduced motion (it's static
-    // positioning, not animation); only the tilt is motion.
-    ref.current.style.setProperty("--spot-x", `${e.clientX - rect.left}px`);
-    ref.current.style.setProperty("--spot-y", `${e.clientY - rect.top}px`);
-    if (reduce) return;
-    ry.set(((e.clientX - rect.left) / rect.width - 0.5) * 6);
-    rx.set(((e.clientY - rect.top) / rect.height - 0.5) * -6);
-  }
-
+function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
     <motion.article
-      ref={ref}
       layout
-      initial={{ opacity: 0, scale: 0.94 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.94 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.35 }}
-      onMouseMove={onMove}
-      onMouseLeave={() => {
-        rx.set(0);
-        ry.set(0);
-      }}
-      style={{ transform: reduce ? undefined : transform }}
-      className="glass spotlight group relative flex h-full flex-col rounded-2xl p-6 transition-colors hover:border-accent/50"
+      className="panel group relative flex h-full flex-col transition-colors hover:border-ink"
     >
-      {project.flagship && (
-        <span className="absolute -top-2.5 right-5 inline-flex items-center gap-1 rounded-full bg-ink px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-surface shadow-md">
-          <Star className="h-2.5 w-2.5 fill-current" aria-hidden />
-          Flagship
-        </span>
-      )}
-
+      {/* Media sits flush against the card frame */}
       {project.video && (
-        <DemoVideo
-          src={project.video.src}
-          poster={project.video.poster}
-          title={project.title}
-        />
+        <div className="overflow-hidden">
+          <DemoVideo
+            src={project.video.src}
+            poster={project.video.poster}
+            title={project.title}
+          />
+        </div>
       )}
       {!project.video && project.image && (
-        <Image
-          src={project.image.src}
-          alt={project.image.alt}
-          width={800}
-          height={450}
-          loading="lazy"
-          className="mb-5 aspect-video w-full rounded-xl border border-edge object-cover object-top"
-        />
+        <div className="overflow-hidden">
+          <Image
+            src={project.image.src}
+            alt={project.image.alt}
+            width={800}
+            height={450}
+            loading="lazy"
+            className="aspect-video w-full border-b border-edge object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+          />
+        </div>
       )}
 
-      <h3 className="text-lg font-semibold transition-colors group-hover:text-accent">
-        {project.title}
-      </h3>
-      <p className="mt-2 text-sm leading-relaxed text-ink-muted">{project.summary}</p>
-
-      <ul className="mt-4 flex-1 space-y-1.5">
-        {project.highlights.map((h) => (
-          <li key={h} className="flex gap-2.5 text-xs leading-relaxed text-ink-muted">
-            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent/70" aria-hidden />
-            {h}
-          </li>
-        ))}
-      </ul>
-
-      <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Technologies used">
-        {project.tech.map((t) => (
-          <li
-            key={t}
-            className="rounded-md border border-edge bg-surface px-2 py-0.5 font-mono text-[10px] text-ink-faint"
-          >
-            {t}
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-5 flex items-center gap-3 border-t border-edge pt-4">
-        {project.github ? (
-          <a
-            href={project.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-muted transition-colors hover:text-ink"
-            aria-label={`Source of ${project.title} on GitHub`}
-          >
-            <Github className="h-3.5 w-3.5" aria-hidden />
-            Source
-          </a>
-        ) : (
-          <span
-            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-faint"
-            title="Source is a private repository"
-          >
-            <Lock className="h-3.5 w-3.5" aria-hidden />
-            Private repo
+      <div className="flex flex-1 flex-col p-6">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="font-mono text-[11px] tabular-nums tracking-widest text-ink-faint transition-colors group-hover:text-accent">
+            {String(index + 1).padStart(3, "0")}
           </span>
-        )}
-        {project.demo && (
-          <a
-            href={project.demo}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-accent transition-colors hover:underline"
-            aria-label={`${project.title} live demo`}
-          >
-            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-            Live Demo
-          </a>
-        )}
+          {project.flagship && (
+            <span className="meta flex items-center gap-1.5 !text-accent">
+              <span className="h-1.5 w-1.5 bg-accent" aria-hidden />
+              Flagship
+            </span>
+          )}
+        </div>
+
+        <h3 className="text-lg font-semibold transition-colors group-hover:text-accent">
+          {project.title}
+        </h3>
+        <p className="mt-2 text-sm leading-relaxed text-ink-muted">{project.summary}</p>
+
+        <ul className="mt-4 flex-1 space-y-1.5">
+          {project.highlights.map((h) => (
+            <li key={h} className="flex gap-2.5 text-xs leading-relaxed text-ink-muted">
+              <span className="mt-[0.45rem] h-1 w-1 shrink-0 bg-accent/70" aria-hidden />
+              {h}
+            </li>
+          ))}
+        </ul>
+
+        <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Technologies used">
+          {project.tech.map((t) => (
+            <li key={t} className="chip !px-2 !py-0.5">
+              {t}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-5 flex items-center gap-4 border-t border-edge pt-4">
+          {project.github ? (
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-muted transition-colors hover:text-ink"
+              aria-label={`Source of ${project.title} on GitHub`}
+            >
+              <Github className="h-3.5 w-3.5" aria-hidden />
+              Source
+            </a>
+          ) : (
+            <span
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-faint"
+              title="Source is a private repository"
+            >
+              <Lock className="h-3.5 w-3.5" aria-hidden />
+              Private repo
+            </span>
+          )}
+          {project.demo && (
+            <a
+              href={project.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-accent transition-colors hover:underline"
+              aria-label={`${project.title} live demo`}
+            >
+              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+              Live Demo
+            </a>
+          )}
+        </div>
       </div>
     </motion.article>
   );
 }
 
+const featured = projects
+  .filter((p) => !p.archive)
+  .map((project, index) => ({ project, index }));
+const archived = projects.filter((p) => p.archive);
+
 export function Projects() {
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
 
-  const visible = projects.filter((p) => {
+  const visible = featured.filter(({ project: p }) => {
     const matchesFilter = filter === "All" || p.tags.includes(filter);
     const q = query.toLowerCase();
     const matchesQuery =
@@ -195,19 +169,20 @@ export function Projects() {
   return (
     <Section
       id="projects"
+      index="04"
       eyebrow="Projects"
       title="Things I've built."
       lede="Most of these are public and runnable on free tiers — click through to the source and see for yourself. A couple are private client / work projects, shown here for context."
     >
       <div className="mb-8 flex flex-wrap items-center gap-3">
-        <div className="glass flex items-center gap-2 rounded-full px-4 py-2">
+        <div className="flex items-center gap-2 border border-edge bg-surface-raised px-4 py-2">
           <Search className="h-4 w-4 text-ink-faint" aria-hidden />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search projects…"
             aria-label="Search projects"
-            className="w-36 bg-transparent text-sm outline-none placeholder:text-ink-faint sm:w-48"
+            className="w-36 bg-transparent font-mono text-xs outline-none placeholder:text-ink-faint sm:w-48"
           />
         </div>
         {/* Toggle buttons, not tabs: aria-pressed is correct and needs no
@@ -219,10 +194,10 @@ export function Projects() {
                 type="button"
                 aria-pressed={filter === f}
                 onClick={() => setFilter(f)}
-                className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
+                className={`border px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-wider transition-all ${
                   filter === f
-                    ? "bg-ink text-surface shadow-md"
-                    : "glass text-ink-muted hover:text-ink"
+                    ? "border-ink bg-ink text-surface"
+                    : "border-edge bg-surface-raised text-ink-muted hover:border-ink hover:text-ink"
                 }`}
               >
                 {f}
@@ -234,16 +209,48 @@ export function Projects() {
 
       <motion.div layout className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         <AnimatePresence mode="popLayout">
-          {visible.map((p) => (
-            <ProjectCard key={p.slug} project={p} />
+          {visible.map(({ project: p, index }) => (
+            <ProjectCard key={p.slug} project={p} index={index} />
           ))}
         </AnimatePresence>
       </motion.div>
 
       {visible.length === 0 && (
-        <p className="py-12 text-center text-sm text-ink-faint">
+        <p className="meta py-12 text-center">
           No projects match — try a different search or filter.
         </p>
+      )}
+
+      {/* Earlier / learning-era work: kept for breadth, out of the spotlight */}
+      {archived.length > 0 && (
+        <div className="mt-16">
+          <p className="meta mb-2 flex items-center gap-2.5">
+            <span className="inline-block h-1.5 w-1.5 bg-ink-faint" aria-hidden />
+            Archive — earlier work
+          </p>
+          <ul className="border-t border-edge">
+            {archived.map((p) => (
+              <li key={p.slug} className="border-b border-edge">
+                <a
+                  href={p.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group grid gap-1 py-4 sm:grid-cols-[220px_1fr_auto] sm:items-baseline sm:gap-8"
+                  aria-label={`${p.title} on GitHub`}
+                >
+                  <span className="text-sm font-medium transition-colors group-hover:text-accent">
+                    {p.title}
+                  </span>
+                  <span className="text-xs text-ink-muted">{p.summary}</span>
+                  <span className="hidden items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-faint transition-colors group-hover:text-ink sm:inline-flex">
+                    <Github className="h-3.5 w-3.5" aria-hidden />
+                    Source
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </Section>
   );

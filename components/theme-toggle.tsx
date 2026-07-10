@@ -22,7 +22,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      className="glass flex h-9 w-9 items-center justify-center rounded-full transition-transform hover:scale-110 active:scale-95"
+      className="flex h-9 w-9 items-center justify-center border border-edge bg-surface-raised transition-colors hover:border-ink active:scale-95"
     >
       {/* Render both and let CSS pick, so SSR markup is stable */}
       <Sun className="h-4 w-4 dark:hidden" aria-hidden />
