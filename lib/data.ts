@@ -226,15 +226,19 @@ export const projects: Project[] = [
     slug: "multi-agent-research-crew",
     title: "Multi-Agent Research Crew",
     summary:
-      "An autonomous Researcher → Writer → Editor agent pipeline that researches, drafts, and publishes professional reports as PDFs.",
+      "An autonomous Researcher → Writer → Editor agent pipeline that researches live web sources, drafts, and publishes professional reports as PDFs.",
     highlights: [
       "Three specialized CrewAI agents in a sequential, hallucination-guarded workflow",
+      "Researcher searches the live web via keyless DuckDuckGo search, with an offline fallback",
       "Editor agent enforces grounding in the researcher's facts before publication",
-      "Streamlit dashboard with direct PDF export via fpdf2",
+      "Gemini calls routed through LiteLLM with automatic retries; live Streamlit dashboard with direct PDF export",
     ],
-    tech: ["Python", "CrewAI", "Streamlit", "Gemini", "fpdf2"],
+    tech: ["Python", "CrewAI", "Streamlit", "Gemini", "LiteLLM", "fpdf2"],
     tags: ["GenAI", "Agents"],
     github: "https://github.com/nsanjayrao/multi-agent-research-crew",
+    demo: "https://multi-agent-research-crew.streamlit.app",
+    flagship: true,
+    video: { src: "/crew-demo.mp4", poster: "/crew-demo-poster.jpg" },
   },
   {
     slug: "customer-churn-prediction",
