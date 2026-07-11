@@ -199,6 +199,7 @@ export const projects: Project[] = [
     tech: ["Python", "Streamlit", "FAISS", "BM25", "SentenceTransformers", "Gemini", "Groq"],
     tags: ["GenAI", "RAG"],
     github: "https://github.com/nsanjayrao/free-rag-chatbot",
+    demo: "https://free-rag-chatbot-frc.streamlit.app",
     flagship: true,
     video: { src: "/rag-demo.mp4", poster: "/rag-demo-poster.jpg" },
   },
